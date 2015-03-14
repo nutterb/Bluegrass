@@ -23,6 +23,16 @@
 #'   of a survival plot.
 #' @param conf.bar If \code{TRUE}, vertical bars denoting the confidence 
 #'   limits are drawn.
+#' @param conf.band If \code{TRUE}, confidence bands denoting the confidence
+#'   limits are drawn.  These are drawn with \code{ggplot2} parameters
+#'   \code{alpha=0.5, linetype=0}.  Changing these values requires manually
+#'   adding a \code{geom_rect} call to \code{gg_expr}.  See the examples for
+#'   how to do this.
+#' @param censor.mark If \code{TRUE} points on the curves are added to denote
+#'   where censored values occur.  These are drawn with \code{ggplot2}
+#'   parameters \code{symbol="+", size=5}.  Changing these values requires 
+#'   manually adding a \code{geom_point} call to \code{gg_expr}.  See the 
+#'   examples for how to do this.
 #' @param offset.scale the scale of time units to offset the bars from the 
 #'   specified interval. For example, if a bar should be placed at 25 months, 
 #'   and scale=.5, the bars will be placed at 24.5 and 25.5 months. If scale=1, 
@@ -36,6 +46,11 @@
 #'   for no printing.
 #' @param gg_expr A list of expressions to be added to the initial \code{ggplot}
 #'   command.
+#' @param give_me A character vector that controls the output of the function.
+#'   By default, only the plot is returned.  The user may request any combination
+#'   of \code{"plot"}, the survival plot; \code{"survRaw"}, the raw data for the
+#'   complete survival curve; and \code{"survData"}, the reduced data for 
+#'   plotting confidence bars.
 #' 
 #' @details The function plots the Kaplan-Meier survival curves of the provided 
 #'   object or data. It then places vertical bars the length of the confidence 
@@ -43,15 +58,12 @@
 #'   
 #'   \code{ggSurvGraph} operates my creating a data frame of values to be 
 #'   plotted, even if a survfit object is passed to the function. Thus, 
-#'   \code{SurvGraph} does not utilize the options in \code{plot.survfit.} 
+#'   \code{ggSurvGraph} does not utilize the options in \code{plot.survfit}. 
 #'   Those accustomed to plotting Kaplan-Meier curves with \code{plot.survfit} 
 #'   will not necessarily get the same results with \code{ggSurvGraph}.
-#'   
-#'   When a data frame is passed to \code{ggSurvGraph} the columns of data must 
-#'   have the named elements: time, surv, lower, upper, n.risk, n.event 
-#'   [,strata], where
 #' 
-#'   When a data frame is passed to SurvGraph the columns of data must have the named elements:
+#'   When a data frame is passed to \code{ggSurvGraph} the columns of data 
+#'   must have the named elements:
 #'   \code{time, surv, lower, upper, n.risk, n.event [,strata]}, where 
 #'   \tabular{ll}{
 #'     \code{time}  \tab denotes the survival time\cr
@@ -112,19 +124,41 @@
 #'   ggSurvGraph(fit, n.risk=TRUE,
 #'               gg_expr=list(aes(linetype=strata)))
 #'               
-#'   #* Confidence Bands can be obtained using geom_rect()
-#'   ggSurvGraph(fit, conf.bar=FALSE, times=seq(0, 60, by=12),
-#'               gg_expr=list(geom_rect(aes(xmin=time, xmax=next.time,
-#'                                          ymin=lower, ymax=upper,
-#'                                          fill=strata),
-#'                                      alpha=.25, linetype=0)))
+#'   #* Confidence Bands settings can be changed using geom_rect()
+#'   #* Doing so requires exporting 'survRaw'
+#'   KM <- ggSurvGraph(fit, conf.bar=FALSE, times=seq(0, 60, by=12),
+#'                     give_me=c("plot", "survRaw"))
+#'   KM$plot + geom_rect(data=KM$survRaw,
+#'                       aes(xmin=time, xmax=next.time,
+#'                           ymin=lower, ymax=upper,
+#'                           fill=strata),
+#'                       alpha=.5, linetype=0)
+#'                                      
+#'   #* Censoring marks can be changed using geom_point()
+#'   #* Doing so requires exporting 'survRaw'
+#'   KM <- ggSurvGraph(fit, conf.bar=FALSE, times=seq(0, 60, by=12),
+#'                     give_me=c("plot", "survRaw"))
+#'   KM$Censor <- KM$survRaw[KM$survRaw$n.censor > 0, ]
+#'   KM$plot + geom_point(data=KM$Censor,
+#'                        aes(x=time, y=surv, colour=strata),
+#'                        shape="*", size=6)
 #' }
 #' 
 
-ggSurvGraph <- function(object, times, cum.inc=FALSE, conf.bar=TRUE,
+ggSurvGraph <- function(object, times, cum.inc=FALSE, 
+                        conf.bar=TRUE, 
+                        conf.band=FALSE, 
+                        censor.mark=FALSE,
                         offset.scale=1, n.risk=FALSE, n.event=FALSE,
-                        gg_expr){
+                        gg_expr,
+                        give_me = "plot"){
   requireNamespace("survival")
+  
+  if (!all(give_me %in% c("plot", "survRaw", "survData")))
+    stop("Elements in 'give_me' must be from the following: 'plot', 'survRaw', 'survData'")
+  give_me <- match.arg(give_me, c("plot", "survRaw", "survData"), 
+                       several.ok=TRUE)
+  
   
   #* Determine if the user provided axis break points in gg_expr
   #* If not, we will define them based on the times 
@@ -162,7 +196,7 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE, conf.bar=TRUE,
   #* within transform(), melt(), and ddply() where there is a data argument
   #* that R CMD check can't reconcile with the variables.
   
-  surv <- lower <- upper <- variable <- n.censor <- NULL
+  surv <- lower <- upper <- variable <- n.censor <- next.time <- strata <- NULL
   
   #********************************************************************
   #*** Prepare the data for plotting
@@ -171,8 +205,9 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE, conf.bar=TRUE,
   
   if (missing(times)){
     times <- sort(unique(object$time))
-    if (!0 %in% times) times <- c(0, times)
   }
+  
+  if (!0 %in% times) times <- sort(c(0, times))
   
   if ("survfit" %in% class(object)){ 
     survRaw <- summary(object, times=rawTimes[rawTimes <= max(times)])
@@ -211,22 +246,6 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE, conf.bar=TRUE,
   survRaw <- plyr::ddply(survRaw,
                          "strata",
                          transform,
-                         time = if (0 %in% time) time else c(0, time),
-                         n.risk = if (0 %in% time) n.risk else c(n.risk[1], n.risk),
-                         n.event = if (0 %in% time) n.event else c(n.event[1], n.event),
-                         n.censor = if (0 %in% time) n.censor else c(n.censor[1], n.censor),
-                         surv = if (0 %in% time) surv else c(surv[1], surv),
-                         lower = if (0 %in% time) lower else c(lower[1], lower),
-                         upper = if (0 %in% time) upper else c(upper[1], upper))
-  
-  survRaw <- plyr::ddply(survRaw,
-                          "strata",
-                          plyr::arrange,
-                          time)
-  
-  survRaw <- plyr::ddply(survRaw,
-                         "strata",
-                         transform,
                          cum.evt = cumsum(n.event),
                          next.time = c(time[-1], time[length(time)]))
   #   return(survRaw)
@@ -241,7 +260,7 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE, conf.bar=TRUE,
                           "strata",
                           transform,
                           cum.evt = cumsum(n.event))
-  
+ 
   survData <- merge(survData, offset, by="strata")
   levels(survData$strata) <- gsub("[[:print:]]+[=]", "", levels(survData$strata))
   
@@ -265,66 +284,79 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE, conf.bar=TRUE,
   
   #*** Create the survival plot
   if (nlevels(survData$strata) > 1){ 
-    .plot <- ggplot(survRaw, aes_string(x='time', y='surv', colour='strata')) + geom_step() 
+    plot <- ggplot(survRaw, aes_string(x='time', y='surv', colour='strata')) + geom_step() 
   }
   else{
-    .plot <- ggplot(survRaw, aes_string(x='time', y='surv')) + geom_step()
+    plot <- ggplot(survRaw, aes_string(x='time', y='surv')) + geom_step()
   }
-  
+
   #*** Add Confidence bars
   if (conf.bar){
-    .plot <- .plot +  
+    plot <- plot +  
       geom_segment(data=survData, aes_string(x='time + offset', 
                                              xend='time + offset', 
                                              y='lower', yend='upper'))
   }
   
+  if (conf.band){
+      plot <- plot + 
+        geom_rect(aes(xmin=time, xmax=next.time,
+                    ymin=lower, ymax=upper,
+                    fill=strata), alpha=.25, linetype=0)
+  }
+  
+  if (censor.mark){
+    Censor <- survRaw[survRaw$n.censor > 0, ]
+    plot <- plot + 
+      geom_point(data=Censor, aes(x=time, y=surv), shape="+", size=5)
+  }
+  
   #*** Add additional layers
-  if (!missing(gg_expr)) .plot <- .plot + gg_expr
+  if (!missing(gg_expr)) plot <- plot + gg_expr
   
   
   #*** Number at risk and events
-  riskTable <- survData
-  riskTable <- reshape2::melt(riskTable[, c("time", "strata", "n.risk", "cum.evt")],
-                              c("time", "strata"))
-  riskTable <- transform(riskTable,
-                         y.pos = ifelse(variable %in% "n.risk", 1, 0))
-  
-  riskTable <- plyr::ddply(riskTable,
-                           c("strata", "variable"),
-                           function(d) merge(data.frame(time=times), d, by="time", all.x=TRUE))
-  
-  riskTable[, 2:5] <- lapply(riskTable[, 2:5],
-                             zoo::na.locf, na.rm=FALSE)
-  
-  if (!n.risk) riskTable <- riskTable[!riskTable$variable %in% "n.risk", ]
-  if (!n.event) riskTable <- riskTable[!riskTable$variable %in% "cum.evt", ]
-  
-  .risk <- ggplot(survData, aes_string(x='time', y='surv')) + 
-    geom_text(data=riskTable, aes_string(x='time', y='rev(variable)', label='value'), size=3.5, hjust=0) + 
-    theme_bw() + 
-    theme(axis.text.x = element_blank(), 
-          axis.title.x = element_blank(), axis.title.y = element_blank(),
-          axis.ticks = element_blank(),
-          panel.grid = element_blank(), panel.border = element_blank())  + 
-    scale_y_discrete(labels=c("Total Events", "N at Risk")[c(n.event, n.risk)])
-  
-  #* Adjust the limits of the Risk Table to match the limits of the plot
-  .lim <- ggplot_build(.plot)$panel$ranges[[1]]$x.range
-  .lim_scalar <- .lim[2] - .lim[2]/1.05
-  .lim <- .lim + c(1, -1) * .lim_scalar
-  .risk <- .risk + xlim(.lim)
-  
-  if (nlevels(riskTable$strata) > 1) .risk <- .risk + facet_wrap(~ strata, ncol=1)
-  
   #* Add risk table
   if (n.risk || n.event){
-    gridExtra::grid.arrange(.plot + theme(plot.margin = grid::unit(c(1,1,0,.5), "lines"), legend.position="bottom"), 
+    riskTable <- survData
+    riskTable <- reshape2::melt(riskTable[, c("time", "strata", "n.risk", "cum.evt")],
+                                c("time", "strata"))
+    riskTable <- transform(riskTable,
+                           y.pos = ifelse(variable %in% "n.risk", 1, 0))
+  
+    riskTable <- plyr::ddply(riskTable,
+                             c("strata", "variable"),
+                             function(d) merge(data.frame(time=times), d, by="time", all.x=TRUE))
+ 
+    riskTable[, 2:5] <- lapply(riskTable[, 2:5],
+                               zoo::na.locf, na.rm=FALSE)
+
+    if (!n.risk) riskTable <- riskTable[!riskTable$variable %in% "n.risk", ]
+    if (!n.event) riskTable <- riskTable[!riskTable$variable %in% "cum.evt", ]
+  
+    .risk <- ggplot(survData, aes_string(x='time', y='surv')) + 
+      geom_text(data=riskTable, aes_string(x='time', y='rev(variable)', label='value'), size=3.5, hjust=0) + 
+      theme_bw() + 
+      theme(axis.text.x = element_blank(), 
+            axis.title.x = element_blank(), axis.title.y = element_blank(),
+            axis.ticks = element_blank(),
+            panel.grid = element_blank(), panel.border = element_blank())  + 
+      scale_y_discrete(labels=c("Total Events", "N at Risk")[c(n.event, n.risk)])
+  
+    if (nlevels(riskTable$strata) > 1) .risk <- .risk + facet_wrap(~ strata, ncol=1)
+  
+    plot <- gridExtra::grid.arrange(plot + theme(plot.margin = grid::unit(c(1,1,0,.5), "lines"), legend.position="bottom"), 
                             blank.pic + theme(plot.margin = grid::unit(c(0,0,0,0), "lines")), 
                             .risk + theme(plot.margin = grid::unit(c(0,1,0,0), "lines")), 
                             clip = FALSE, nrow = 3,
                             ncol = 1, heights = grid::unit(c(.70, .04, .35),c("null", "null", "null"))) 
-  } else print(.plot)
+  } 
   
+  output <- list(plot=plot,
+                 survRaw=survRaw,
+                 survData=survData)
+  output <- output[give_me]
   
+  if (length(output) == 1) output <- unlist(output)
+  output
 }
