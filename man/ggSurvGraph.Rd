@@ -144,8 +144,8 @@ object while suppressing printing.  I will continue to look for a
 solution to this issue and update when I can.
 }
 \examples{
-\dontrun{
-  library(survival)
+library(survival)
+  library(ggplot2)
   fit <- survfit(Surv(time, status) ~ x, data=aml)
   ggSurvGraph(fit)
   ggSurvGraph(fit, offset.scale=2, n.risk=TRUE)
@@ -176,7 +176,6 @@ solution to this issue and update when I can.
   KM$plot + geom_point(data=KM$Censor,
                        aes(x=time, y=surv, colour=strata),
                        shape="*", size=6)
-}
 }
 \author{
 Benjamin Nutter
