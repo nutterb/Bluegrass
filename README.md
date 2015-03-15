@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nutterb/Bluegrass.png?branch=master)](https://travis-ci.org/nutterb/Bluegrass)
+
 # Bluegrass
 
 Bluegrass is a collection of tools I have developed for use in performing my professional responsibilities.  There is no central purpose to these functions, and the package does
