@@ -1,6 +1,6 @@
 Package: Bluegrass
 Title: Assorted Tools and Gimmicks for My Own Personal Use
-Version: 0.0.1-0
+Version: 0.0.1-3
 Author: Benjamin Nutter
 Maintainer: Benjamin Nutter <benjamin.nutter@gmail.com>
 Description: There is no unifying vision for Bluegrass.  
@@ -8,12 +8,10 @@ Description: There is no unifying vision for Bluegrass.
 Depends:
     R (>= 3.0.0)
 Imports:
-    devtools,
     ggplot2,
     grid,
     gridExtra,
     Hmisc,
-    lazyWeave,
     plyr,
     reshape2,
     stringr,

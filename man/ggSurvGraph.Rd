@@ -5,7 +5,8 @@
 \title{Kaplan-Meier Survival Graphs}
 \usage{
 ggSurvGraph(object, times, cum.inc = FALSE, conf.bar = TRUE,
-  offset.scale = 1, n.risk = FALSE, n.event = FALSE, gg_expr)
+  conf.band = FALSE, censor.mark = FALSE, offset.scale = 1,
+  n.risk = FALSE, n.event = FALSE, gg_expr, give_me = "plot")
 }
 \arguments{
 \item{object}{A fitted survival object, such as a survfit model or a data
@@ -22,6 +23,18 @@ of a survival plot.}
 \item{conf.bar}{If \code{TRUE}, vertical bars denoting the confidence
 limits are drawn.}
 
+\item{conf.band}{If \code{TRUE}, confidence bands denoting the confidence
+limits are drawn.  These are drawn with \code{ggplot2} parameters
+\code{alpha=0.5, linetype=0}.  Changing these values requires manually
+adding a \code{geom_rect} call to \code{gg_expr}.  See the examples for
+how to do this.}
+
+\item{censor.mark}{If \code{TRUE} points on the curves are added to denote
+where censored values occur.  These are drawn with \code{ggplot2}
+parameters \code{symbol="+", size=5}.  Changing these values requires
+manually adding a \code{geom_point} call to \code{gg_expr}.  See the
+examples for how to do this.}
+
 \item{offset.scale}{the scale of time units to offset the bars from the
 specified interval. For example, if a bar should be placed at 25 months,
 and scale=.5, the bars will be placed at 24.5 and 25.5 months. If scale=1,
@@ -37,7 +50,13 @@ should be printed at the bottom of the graph. Defaults to \code{FALSE}
 for no printing.}
 
 \item{gg_expr}{A list of expressions to be added to the initial \code{ggplot}
-  command.}
+command.}
+
+\item{give_me}{A character vector that controls the output of the function.
+  By default, only the plot is returned.  The user may request any combination
+  of \code{"plot"}, the survival plot; \code{"survRaw"}, the raw data for the
+  complete survival curve; and \code{"survData"}, the reduced data for
+  plotting confidence bars.}
 }
 \description{
 Creates a graph of one or more survival curves with vertical
@@ -51,15 +70,12 @@ The function plots the Kaplan-Meier survival curves of the provided
 
   \code{ggSurvGraph} operates my creating a data frame of values to be
   plotted, even if a survfit object is passed to the function. Thus,
-  \code{SurvGraph} does not utilize the options in \code{plot.survfit.}
+  \code{ggSurvGraph} does not utilize the options in \code{plot.survfit}.
   Those accustomed to plotting Kaplan-Meier curves with \code{plot.survfit}
   will not necessarily get the same results with \code{ggSurvGraph}.
 
-  When a data frame is passed to \code{ggSurvGraph} the columns of data must
-  have the named elements: time, surv, lower, upper, n.risk, n.event
-  [,strata], where
-
-  When a data frame is passed to SurvGraph the columns of data must have the named elements:
+  When a data frame is passed to \code{ggSurvGraph} the columns of data
+  must have the named elements:
   \code{time, surv, lower, upper, n.risk, n.event [,strata]}, where
   \tabular{ll}{
     \code{time}  \tab denotes the survival time\cr
@@ -105,9 +121,31 @@ Contents of \code{survRaw}
 The contents \code{survData} are identical, except it lacks the \code{next.time}
 variable.
 }
+
+\section{Known Issues}{
+
+
+Customizations can be difficult to make to the plot when \code{n.risk} or
+\code{n.event} are \code{TRUE}.  This is because additional layers given
+after the plot is generated are attached the the N at risk table instead
+of to the survival plot.  Most common customizations can be accomplished
+by using the \code{gg_expr} list.
+
+If the user wishes to customize the plot beyond what can be done with
+\code{gg_expr}, he or she will need to turn both \code{n.risk} and
+\code{n.event} to \code{FALSE} and use \code{gridExtra::grid.arrange}
+to add the N at risk table.
+
+It is also known that using \code{n.risk=TRUE} or \code{n.event=TRUE}
+causes a \code{NULL} value to be returned in the \code{plot} position
+of the output.  The current version of \code{gridExtra::grid.arrange}
+appears to print the plot without the option of storing it as an
+object while suppressing printing.  I will continue to look for a
+solution to this issue and update when I can.
+}
 \examples{
-\dontrun{
-  library(survival)
+library(survival)
+  library(ggplot2)
   fit <- survfit(Surv(time, status) ~ x, data=aml)
   ggSurvGraph(fit)
   ggSurvGraph(fit, offset.scale=2, n.risk=TRUE)
@@ -120,13 +158,24 @@ variable.
   ggSurvGraph(fit, n.risk=TRUE,
               gg_expr=list(aes(linetype=strata)))
 
-  #* Confidence Bands can be obtained using geom_rect()
-  ggSurvGraph(fit, conf.bar=FALSE, times=seq(0, 60, by=12),
-              gg_expr=list(geom_rect(aes(xmin=time, xmax=next.time,
-                                         ymin=lower, ymax=upper,
-                                         fill=strata),
-                                     alpha=.25, linetype=0)))
-}
+  #* Confidence Bands settings can be changed using geom_rect()
+  #* Doing so requires exporting 'survRaw'
+  KM <- ggSurvGraph(fit, conf.bar=FALSE, times=seq(0, 60, by=12),
+                    give_me=c("plot", "survRaw"))
+  KM$plot + geom_rect(data=KM$survRaw,
+                      aes(xmin=time, xmax=next.time,
+                          ymin=lower, ymax=upper,
+                          fill=strata),
+                      alpha=.5, linetype=0)
+
+  #* Censoring marks can be changed using geom_point()
+  #* Doing so requires exporting 'survRaw'
+  KM <- ggSurvGraph(fit, conf.bar=FALSE, times=seq(0, 60, by=12),
+                    give_me=c("plot", "survRaw"))
+  KM$Censor <- KM$survRaw[KM$survRaw$n.censor > 0, ]
+  KM$plot + geom_point(data=KM$Censor,
+                       aes(x=time, y=surv, colour=strata),
+                       shape="*", size=6)
 }
 \author{
 Benjamin Nutter
