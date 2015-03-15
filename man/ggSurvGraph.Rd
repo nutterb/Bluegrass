@@ -121,6 +121,28 @@ Contents of \code{survRaw}
 The contents \code{survData} are identical, except it lacks the \code{next.time}
 variable.
 }
+
+\section{Known Issues}{
+
+
+Customizations can be difficult to make to the plot when \code{n.risk} or
+\code{n.event} are \code{TRUE}.  This is because additional layers given
+after the plot is generated are attached the the N at risk table instead
+of to the survival plot.  Most common customizations can be accomplished
+by using the \code{gg_expr} list.
+
+If the user wishes to customize the plot beyond what can be done with
+\code{gg_expr}, he or she will need to turn both \code{n.risk} and
+\code{n.event} to \code{FALSE} and use \code{gridExtra::grid.arrange}
+to add the N at risk table.
+
+It is also known that using \code{n.risk=TRUE} or \code{n.event=TRUE}
+causes a \code{NULL} value to be returned in the \code{plot} position
+of the output.  The current version of \code{gridExtra::grid.arrange}
+appears to print the plot without the option of storing it as an
+object while suppressing printing.  I will continue to look for a
+solution to this issue and update when I can.
+}
 \examples{
 \dontrun{
   library(survival)

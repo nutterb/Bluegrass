@@ -107,15 +107,35 @@
 #' 
 #' The contents \code{survData} are identical, except it lacks the \code{next.time}
 #' variable.
+#' 
+#' @section Known Issues:
+#' 
+#' Customizations can be difficult to make to the plot when \code{n.risk} or 
+#' \code{n.event} are \code{TRUE}.  This is because additional layers given
+#' after the plot is generated are attached the the N at risk table instead
+#' of to the survival plot.  Most common customizations can be accomplished
+#' by using the \code{gg_expr} list.  
+#' 
+#' If the user wishes to customize the plot beyond what can be done with 
+#' \code{gg_expr}, he or she will need to turn both \code{n.risk} and 
+#' \code{n.event} to \code{FALSE} and use \code{gridExtra::grid.arrange}
+#' to add the N at risk table.  
+#' 
+#' It is also known that using \code{n.risk=TRUE} or \code{n.event=TRUE}
+#' causes a \code{NULL} value to be returned in the \code{plot} position 
+#' of the output.  The current version of \code{gridExtra::grid.arrange}
+#' appears to print the plot without the option of storing it as an 
+#' object while suppressing printing.  I will continue to look for a 
+#' solution to this issue and update when I can.
 #'  
 #' @author Benjamin Nutter
 #' @examples
-#' \dontrun{ 
+#' \dontrun{
 #'   library(survival)
 #'   fit <- survfit(Surv(time, status) ~ x, data=aml)
 #'   ggSurvGraph(fit)
 #'   ggSurvGraph(fit, offset.scale=2, n.risk=TRUE) 
-#'   
+#'
 #'   #* changing the linetype:
 #'   #* Because the graph is based on the output from the survfit object,
 #'   #* the aesthetics passed to the plot must be based on the variable names
@@ -154,12 +174,6 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
                         give_me = "plot"){
   requireNamespace("survival")
   
-  if (!all(give_me %in% c("plot", "survRaw", "survData")))
-    stop("Elements in 'give_me' must be from the following: 'plot', 'survRaw', 'survData'")
-  give_me <- match.arg(give_me, c("plot", "survRaw", "survData"), 
-                       several.ok=TRUE)
-  
-  
   #* Determine if the user provided axis break points in gg_expr
   #* If not, we will define them based on the times 
   userAxis <- any(grepl("scale_x_continuous", as.character(substitute(gg_expr))))
@@ -184,6 +198,17 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
     error.msg <- c(error.msg, paste0(error.count, ": data frame \'object\' is missing columns ", miss.col, sep=""))
   }
   
+  #*** Requested elements must be from the options:
+  #*** plot, survRaw, or survData
+  if (!all(give_me %in% c("plot", "survRaw", "survData"))){
+    error.count <- error.count + 1
+    error.msg <- c(error.msg, 
+                   "Elements in 'give_me' must be from the following: 'plot', 'survRaw', 'survData'")
+  }
+  
+  give_me <- match.arg(give_me, c("plot", "survRaw", "survData"), 
+                       several.ok=TRUE)
+  
   #*** Stop the function if any parameter checks failed
   if (error.count){
     stop(paste(error.msg, collapse="\n"))
@@ -196,7 +221,7 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
   #* within transform(), melt(), and ddply() where there is a data argument
   #* that R CMD check can't reconcile with the variables.
   
-  surv <- lower <- upper <- variable <- n.censor <- next.time <- strata <- NULL
+#   variable <- NULL
   
   #********************************************************************
   #*** Prepare the data for plotting
@@ -248,7 +273,7 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
                          transform,
                          cum.evt = cumsum(n.event),
                          next.time = c(time[-1], time[length(time)]))
-  #   return(survRaw)
+
   levels(survRaw$strata) <- gsub("[[:print:]]+[=]", "", levels(survRaw$strata))
   
   
@@ -300,15 +325,15 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
   
   if (conf.band){
       plot <- plot + 
-        geom_rect(aes(xmin=time, xmax=next.time,
-                    ymin=lower, ymax=upper,
-                    fill=strata), alpha=.25, linetype=0)
+        geom_rect(aes_string(xmin='time', xmax='next.time',
+                    ymin='lower', ymax='upper',
+                    fill='strata'), alpha=.25, linetype=0)
   }
   
   if (censor.mark){
     Censor <- survRaw[survRaw$n.censor > 0, ]
     plot <- plot + 
-      geom_point(data=Censor, aes(x=time, y=surv), shape="+", size=5)
+      geom_point(data=Censor, aes_string(x='time', y='surv'), shape="+", size=5)
   }
   
   #*** Add additional layers
@@ -321,9 +346,8 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
     riskTable <- survData
     riskTable <- reshape2::melt(riskTable[, c("time", "strata", "n.risk", "cum.evt")],
                                 c("time", "strata"))
-    riskTable <- transform(riskTable,
-                           y.pos = ifelse(variable %in% "n.risk", 1, 0))
-  
+    riskTable$y.pos <- ifelse(riskTable$variable %in% "n.risk", 1, 0)
+
     riskTable <- plyr::ddply(riskTable,
                              c("strata", "variable"),
                              function(d) merge(data.frame(time=times), d, by="time", all.x=TRUE))
@@ -343,20 +367,22 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
             panel.grid = element_blank(), panel.border = element_blank())  + 
       scale_y_discrete(labels=c("Total Events", "N at Risk")[c(n.event, n.risk)])
   
-    if (nlevels(riskTable$strata) > 1) .risk <- .risk + facet_wrap(~ strata, ncol=1)
-  
+    if (nlevels(riskTable$strata) > 1) .risk <- .risk + facet_wrap(~ strata, ncol=1)    
+    
     plot <- gridExtra::grid.arrange(plot + theme(plot.margin = grid::unit(c(1,1,0,.5), "lines"), legend.position="bottom"), 
                             blank.pic + theme(plot.margin = grid::unit(c(0,0,0,0), "lines")), 
                             .risk + theme(plot.margin = grid::unit(c(0,1,0,0), "lines")), 
                             clip = FALSE, nrow = 3,
-                            ncol = 1, heights = grid::unit(c(.70, .04, .35),c("null", "null", "null"))) 
-  } 
+                            ncol = 1, heights = grid::unit(c(.70, .04, .35),c("null", "null", "null")))
+  }
   
   output <- list(plot=plot,
                  survRaw=survRaw,
                  survData=survData)
+
   output <- output[give_me]
   
-  if (length(output) == 1) output <- unlist(output)
+  
+  if (length(output) == 1) output <- output[[1]]
   output
 }
