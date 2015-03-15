@@ -130,8 +130,9 @@
 #'  
 #' @author Benjamin Nutter
 #' @examples
-#' \dontrun{
+#' 
 #'   library(survival)
+#'   library(ggplot2)
 #'   fit <- survfit(Surv(time, status) ~ x, data=aml)
 #'   ggSurvGraph(fit)
 #'   ggSurvGraph(fit, offset.scale=2, n.risk=TRUE) 
@@ -162,7 +163,7 @@
 #'   KM$plot + geom_point(data=KM$Censor,
 #'                        aes(x=time, y=surv, colour=strata),
 #'                        shape="*", size=6)
-#' }
+#' 
 #' 
 
 ggSurvGraph <- function(object, times, cum.inc=FALSE, 
@@ -227,12 +228,12 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
   #*** Prepare the data for plotting
   
   rawTimes <- sort(unique(object$time))
+  if (!0 %in% rawTimes) rawTimes <- sort(c(0, rawTimes))
   
   if (missing(times)){
     times <- sort(unique(object$time))
+    if (!0 %in% times) times <- sort(c(0, times))
   }
-  
-  if (!0 %in% times) times <- sort(c(0, times))
   
   if ("survfit" %in% class(object)){ 
     survRaw <- summary(object, times=rawTimes[rawTimes <= max(times)])
@@ -294,8 +295,10 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
   
   #*** Add the scale_x_continous layer if not provided by the user
   if (!userAxis){
-    if (missing(gg_expr)) gg_expr <- list(scale_x_continuous(breaks=times))
-    else gg_expr <- c(gg_expr, list(scale_x_continuous(breaks=times)))
+    if (missing(gg_expr)) gg_expr <- list(scale_x_continuous(breaks=times,
+                                                             limits=range(times)))
+    else gg_expr <- c(gg_expr, list(scale_x_continuous(breaks=times,
+                                                       limits=range(times))))
   }
   
   #*** Creates a blank plot for a spacer between survival plot and risk/event data
@@ -309,11 +312,17 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
   
   #*** Create the survival plot
   if (nlevels(survData$strata) > 1){ 
-    plot <- ggplot(survRaw, aes_string(x='time', y='surv', colour='strata')) + geom_step() 
+    plot <- ggplot(survRaw, 
+                   aes_string(x='time', y='surv', colour='strata')) + 
+              geom_step() 
   }
   else{
-    plot <- ggplot(survRaw, aes_string(x='time', y='surv')) + geom_step()
+    plot <- ggplot(survRaw, 
+                   aes_string(x='time', y='surv')) + 
+               geom_step()
   }
+
+#   plot <- plot + gg_expr
 
   #*** Add Confidence bars
   if (conf.bar){
@@ -337,7 +346,9 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
   }
   
   #*** Add additional layers
-  if (!missing(gg_expr)) plot <- plot + gg_expr
+# return(gg_expr)
+#   if (!missing(gg_expr)) plot <- plot + gg_expr
+  plot <- plot + gg_expr
   
   
   #*** Number at risk and events
@@ -373,7 +384,9 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
                             blank.pic + theme(plot.margin = grid::unit(c(0,0,0,0), "lines")), 
                             .risk + theme(plot.margin = grid::unit(c(0,1,0,0), "lines")), 
                             clip = FALSE, nrow = 3,
-                            ncol = 1, heights = grid::unit(c(.70, .04, .35),c("null", "null", "null")))
+                            ncol = 1, 
+                            heights = grid::unit(c(.70, .04, .35),
+                                                 c("null", "null", "null")))
   }
   
   output <- list(plot=plot,
