@@ -1,0 +1,4 @@
+#### 0.0.1-1
+
+* Adds the function `countConsecutive` for identifying runs in Shewhart control
+  charts.
