@@ -1,7 +1,7 @@
 #' @name showDuplicated
 #' @export showDuplicated
-#' @importFrom plyr arrange
-#' @importFrom plyr desc
+#' @importFrom dplyr arrange
+#' @importFrom dplyr desc
 #' 
 #' @title Subset a Data Frame to Duplicated Subjects
 #' @description Reduces a data frame to those subjects that are duplicated,
@@ -21,14 +21,14 @@
 #' 
 
 showDuplicated <- function(data, ...){
+  vars <- as.character(substitute(list(...)))[-1]
+  
   #* arrange the data frame
-  arrange_vars <- paste(gsub("desc[(]", "plyr::desc(", as.character(substitute(c(...)))[-1]), collapse=", ")
-  arrange_cmd <- paste0("plyr::arrange(data, ", arrange_vars, ")")
-  data <- eval(parse(text=arrange_cmd))
+  arrange_vars <- gsub("desc[(]", "dplyr::desc(", vars)
+  data <- dplyr::arrange_(data, arrange_vars)
   
   #* Identify duplicates
-  vector_str <- as.character(substitute(c(...)))[-1]
-  vector_str <- gsub("desc[(]", "", vector_str)
+  vector_str <- gsub("desc[(]", "", vars)
   vector_str <- gsub("[)]", "", vector_str)
   dup <- duplicated(data[, vector_str])
   

@@ -1,5 +1,10 @@
 # `Bluegrass` Change History
 
+## Verison 0.1.0-0 (27 April 2015)
+* Added core functionality for control charts
+* Included dependency on dplyr and magrittr
+* Removed dependencies on plyr
+
 ## Version 0.0.1-1
 * Upgrades to `ggSurvGraph`
   * Adds the argument `conf.band`, which plots confidence bands to the KM curve

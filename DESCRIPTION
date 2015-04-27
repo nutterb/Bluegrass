@@ -8,13 +8,16 @@ Description: There is no unifying vision for Bluegrass.
 Depends:
     R (>= 3.0.0)
 Imports:
+    dplyr,
     ggplot2,
     grid,
     gridExtra,
     Hmisc,
-    plyr,
+    lazyWeave,
+    magrittr,
     reshape2,
     stringr,
+    tidyr,
     zoo,
 Suggests:
     survival

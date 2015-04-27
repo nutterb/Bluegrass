@@ -299,7 +299,7 @@ dataContents <- function(data, round=2, report=TRUE,
   out <- ""
   if ("overview" %in% print_tabs){
     out <- if (is.null(overview)) out
-           else paste(out, do.call("lazy.matrix", c(list(x=overview),
+           else paste(out, do.call("lazyWeave::lazy.matrix", c(list(x=overview),
                                                     overview_args)),
                       sep="\n\n")
   }
@@ -307,7 +307,7 @@ dataContents <- function(data, round=2, report=TRUE,
   #* Return the printed numeric table
   if ("numeric" %in% print_tabs){
     out <- if (is.null(numeric)) out
-    else paste(out, do.call("lazy.matrix", c(list(x=numeric),
+    else paste(out, do.call("lazyWeave::lazy.matrix", c(list(x=numeric),
                                              numeric_args)),
                sep="\n\n")
   }
@@ -315,7 +315,7 @@ dataContents <- function(data, round=2, report=TRUE,
   #* Return the printed categorical table
   if ("categorical" %in% print_tabs){
     out <- if (is.null(freq)) out
-    else paste(out, do.call("lazy.matrix", c(list(x=freq),
+    else paste(out, do.call("lazyWeave::lazy.matrix", c(list(x=freq),
                                              categorical_args)),
                sep="\n\n")
   }
@@ -323,7 +323,7 @@ dataContents <- function(data, round=2, report=TRUE,
   #* Return the printed dates table
   if ("date" %in% print_tabs){
     out <- if (is.null(date)) out
-    else paste(out, do.call("lazy.matrix", c(list(x=date),
+    else paste(out, do.call("lazyWeave::lazy.matrix", c(list(x=date),
                                              date_args)),
                sep="\n\n")
   }
@@ -331,7 +331,7 @@ dataContents <- function(data, round=2, report=TRUE,
   #* Return the printed other variables table
   if ("other" %in% print_tabs){
     out <- if (is.null(other)) out
-    else paste(out, do.call("lazy.matrix", c(list(x=other),
+    else paste(out, do.call("lazyWeave::lazy.matrix", c(list(x=other),
                                              other_args)),
                sep="\n\n")
   }

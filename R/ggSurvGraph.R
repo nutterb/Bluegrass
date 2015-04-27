@@ -3,8 +3,9 @@
 #' @import ggplot2
 #' @importFrom grid unit
 #' @importFrom gridExtra grid.arrange
-#' @importFrom plyr arrange
-#' @importFrom plyr ddply
+#' @importFrom dplyr group_by
+#' @importFrom dplyr mutate
+#' @importFrom dplyr left_join
 #' @importFrom reshape2 melt
 #' @importFrom zoo na.locf
 #' 
@@ -222,7 +223,7 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
   #* within transform(), melt(), and ddply() where there is a data argument
   #* that R CMD check can't reconcile with the variables.
   
-#   variable <- NULL
+  strata <- variable <- NULL
   
   #********************************************************************
   #*** Prepare the data for plotting
@@ -269,12 +270,11 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
                                             "surv", "lower", "upper", "strata")], 
                                   identity))
   
-  survRaw <- plyr::ddply(survRaw,
-                         "strata",
-                         transform,
-                         cum.evt = cumsum(n.event),
-                         next.time = c(time[-1], time[length(time)]))
-
+  survRaw <- survRaw %>%
+    dplyr::group_by(strata) %>%
+    dplyr::mutate(cum.evt = cumsum(n.event),
+                  next.time = c(time[-1], time[length(time)]))
+  
   levels(survRaw$strata) <- gsub("[[:print:]]+[=]", "", levels(survRaw$strata))
   
   
@@ -282,11 +282,10 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
   survData <- as.data.frame(lapply(survData[c("time", "n.risk", "n.event", "n.censor", 
                                               "surv", "lower", "upper", "strata")], 
                                    identity))
-  survData <- plyr::ddply(survData,
-                          "strata",
-                          transform,
-                          cum.evt = cumsum(n.event))
- 
+  survData <- survData %>%
+    dplyr::group_by(strata) %>%
+    dplyr::mutate(cum.evt = cumsum(n.event))
+
   survData <- merge(survData, offset, by="strata")
   levels(survData$strata) <- gsub("[[:print:]]+[=]", "", levels(survData$strata))
   
@@ -359,10 +358,15 @@ ggSurvGraph <- function(object, times, cum.inc=FALSE,
                                 c("time", "strata"))
     riskTable$y.pos <- ifelse(riskTable$variable %in% "n.risk", 1, 0)
 
-    riskTable <- plyr::ddply(riskTable,
-                             c("strata", "variable"),
-                             function(d) merge(data.frame(time=times), d, by="time", all.x=TRUE))
- 
+    riskTable <- riskTable %>%
+      group_by(strata, variable)
+    riskTable <- left_join(riskTable, 
+                           data_frame(time = times),
+                           by="time")
+#     riskTable <- plyr::ddply(riskTable,
+#                              c("strata", "variable"),
+#                              function(d) merge(data.frame(time=times), d, by="time", all.x=TRUE))
+#  
     riskTable[, 2:5] <- lapply(riskTable[, 2:5],
                                zoo::na.locf, na.rm=FALSE)
 
