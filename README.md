@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/nutterb/Bluegrass.png?branch=master)](https://travis-ci.org/nutterb/Bluegrass)
+[![Build Status](https://travis-ci.org/nutterb/Bluegrass.png?branch=devel)](https://travis-ci.org/nutterb/Bluegrass)
 
 # Bluegrass
 
