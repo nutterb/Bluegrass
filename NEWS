@@ -1,5 +1,8 @@
 # `Bluegrass` Change History
 
+## Version 0.1.1-0 (30 April 2015)
+* Added numberToWord for converting numerics into text strings.
+
 ## Verison 0.1.0-0 (27 April 2015)
 * Added core functionality for control charts
 * Included dependency on dplyr and magrittr
