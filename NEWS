@@ -1,5 +1,8 @@
 # `Bluegrass` Change History
 
+## Version 0.1.1-1 (30 April 2015)
+* Fixed a sorting bug in numberToWord that was creating weird results.
+
 ## Version 0.1.1-0 (30 April 2015)
 * Added numberToWord for converting numerics into text strings.
 

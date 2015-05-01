@@ -19,11 +19,15 @@
 #'   trillions), I'm not too concerned about because let's face it--at that point, you should
 #'   probably reconsider if you really want to print out the number as text.  Do note, however, 
 #'   that exact powers of 10 that exceed one billion are problematic.
+#'   
+#'   \code{numberToWord} also starts to lose precision somewhere between 1 and 2 quadrillion.
+#'   I apologize for not being more specific for that, but my motivation for this was I needed
+#'   to be able to print numbers between one and thirty one.
 #' 
 #' @author Benjamin Nutter
 #' 
 #' @examples
-#' numberToWord(1:10)
+#' numberToWord(0:20)
 #' numberToWord(1549846132187489464)
 #' 
 
@@ -59,6 +63,7 @@ numberToWord <- function(x)
 #' 
 translateHundred <- function(x)
 {
+  if (length(x) == 1) if (x == "0") return ("zero")
   numRef <- data_frame(num = c("", 0:19),
                        one_place = c("",         "",    "one",     "two",       "three", 
                                      "four",     "five",    "six",     "seven",     "eight", 
@@ -80,7 +85,6 @@ translateHundred <- function(x)
   X <- as.data.frame(do.call("rbind", stringr::str_split(x, "")), 
                      stringsAsFactors=FALSE)[, -1, drop=FALSE]
   
-  
   names(X) <- rev(places[1:ncol(X)])
   
   if ("ten" %in% names(X))
@@ -93,20 +97,15 @@ translateHundred <- function(x)
                                  yes = "",
                                  no = ten))
   }
-  
+
   for (p in rev(places))
   {
     if (p %in% names(X))
     {
-      X <- merge(x = X,
-                 y = numRef[, c("num", paste0(p, "_place"))],
-                 by.x = p,
-                 by.y = "num",
-                 all.x = TRUE, 
-                 sort = FALSE)
+      X[[paste0(p, "_place")]] <- numRef[[paste0(p, "_place")]][match(X[[p]], numRef$num)]
     }
   }
-  
+
   text <- apply(X[, !names(X) %in% places, drop=FALSE], 
                 1,
                 function(t, ...) paste(t[t != ""], ...),
