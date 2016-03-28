@@ -38,70 +38,125 @@
 #' 
 
 #' @rdname ControlChartConstants
-A1 <- function(n) 3 / (c2(n) * sqrt(n))
+A1 <- function(n)
+{
+  3 / (c2(n) * sqrt(n))
+}
 
 #' @rdname ControlChartConstants
-A2 <- function(n) 3 / (d2(n) * sqrt(n))
+A2 <- function(n)
+{
+  3 / (d2(n) * sqrt(n))
+}
 
 #' @rdname ControlChartConstants
-A3 <- function(n) 3 / (c4(n) * sqrt(n))
+A3 <- function(n)
+{
+  3 / (c4(n) * sqrt(n))
+}
 
 #' @rdname ControlChartConstants
-A4 <- function(n){
+A4 <- function(n)
+{
   3 / (d4(n) * sqrt(n))
 }
 
 #' @rdname ControlChartConstants
-A6 <- function(n){
+A6 <- function(n)
+{
   A <- data.frame(n = c(3, 5, 7, 9, 11),
                   A6 = c(1.187, 0.691, 0.509, 0.412, 0.350))
-  A$A6[sapply(n, function(n) max(which(A$n <= n)))]
+  A$A6[vapply(
+        n, 
+        function(n) max(which(A$n <= n)),
+        numeric(1)
+       )]
 }
 
 #' @rdname ControlChartConstants
-A9 <- function(n){
+A9 <- function(n)
+{
   A <- data.frame(n = c(3, 5, 7, 9),
                   A9 = c(1.265, 0.712, 0.520, 0.419))
-  A$A9[sapply(n, function(n) max(which(A$n <= n)))]
+  A$A9[vapply(
+        n, 
+        function(n) max(which(A$n <= n)),
+        numeric(1)
+      )]
 }
 
 #' @rdname ControlChartConstants
-B3 <- function(n, rms=TRUE){
-  cn <- if (rms) c2(n) else c4(n)
+B3 <- function(n, rms=TRUE)
+{
+  cn <- 
+    if (rms) 
+    {
+      c2(n) 
+    }
+    else 
+    {
+      c4(n)
+    }
+  
   1 - (3 / cn) * sqrt((n-1)/n - cn^2)
 }
 
 #' @rdname ControlChartConstants
-B4 <- function(n, rms=TRUE){
-  cn <- if (rms) c2(n) else c4(n)
+B4 <- function(n, rms=TRUE)
+{
+  cn <- 
+    if (rms) 
+    {
+      c2(n) 
+    }
+    else
+    {
+      c4(n)
+    }
+  
   1 + (3 / cn) * sqrt((n-1)/n - cn^2)
 }
 
 #' @rdname ControlChartConstants
-c2 <- function(n) sqrt(2/n) * (gamma(n/2) / gamma((n-1)/2))
+c2 <- function(n)
+{
+  sqrt(2/n) * (gamma(n/2) / gamma((n-1)/2))
+}
 
 #' @rdname ControlChartConstants
-c4 <- function(n) c2(n) * sqrt(n/(n-1))
+c4 <- function(n)
+{
+  c2(n) * sqrt(n/(n-1))
+}
 
 #' @rdname ControlChartConstants
 d2 <- function (n) 
 {
+  n[n == 1] <- 2 
+  
   fn <- quote(function(w){ptukey(w, n, Inf, lower.tail=FALSE)})
-  sapply(n, 
+  
+  vapply(n, 
          function(n)
          {
-           if (n == 1) integrate(function(w){ptukey(w, 2, Inf, lower.tail=FALSE)}, 0, Inf)[[1]]
-           else integrate(eval(fn), 0, Inf)[[1]]
-         })
+           integrate(eval(fn), 0, Inf)[[1]]
+         },
+         numeric(1))
 }
 
 #' @rdname ControlChartConstants
 d3 <- function (n) 
 {
+  n[n == 1] <- 2
+  
   d2 <- d2(n)
+  
   fn <- quote(function(w){ w * (1 - ptukey(w, n, Inf))})
-  d <- sapply(n,
-              function(n) integrate(eval(fn), 0, Inf)[[1]])
+  
+  d <- vapply(n,
+              function(n) integrate(eval(fn), 0, Inf)[[1]],
+              numeric(1))
+  
   sqrt(2 * d - d2^2)
 }
 
@@ -117,20 +172,23 @@ d4 <- function(n)
                          3.883, 4.037, 4.166, 4.274, 4.372,
                          4.450, 4.591, 4.707, 4.806, 4.892,
                          4.968))
-  D$d4[sapply(n, function(n) max(which(D$n <= n)))]
+  D$d4[vapply(n, function(n) max(which(D$n <= n)), numeric(1))]
 }
 
 
 #' @rdname ControlChartConstants
-D3 <- function(n){
+D3 <- function(n)
+{
   D <- 1 - (3 * d3(n) / d2(n))
   D <- ifelse(D < 0, NA, D)
   D
 }
 
 #' @rdname ControlChartConstants
-D4 <- function(n){
-  ifelse(n == 1, 3.268, 1 + (3 * d3(n) / d2(n)))
+D4 <- function(n)
+{
+  n[n == 1] <- 2
+  1 + (3 * d3(n) / d2(n))
 }
 
 #' @rdname ControlChartConstants
