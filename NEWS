@@ -1,5 +1,9 @@
 # `Bluegrass` Change History
 
+## Version 0.1.1-2 (15 July 2016)
+* Modernizing code.  Edits to `data_contents`, `labels_template`.
+* Updating documentation with functional requirements.
+
 ## Version 0.1.1-1 (30 April 2015)
 * Fixed a sorting bug in numberToWord that was creating weird results.
 

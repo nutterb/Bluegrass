@@ -40,30 +40,35 @@
 #' @rdname ControlChartConstants
 A1 <- function(n)
 {
+  checkmate::assertNumeric(n)
   3 / (c2(n) * sqrt(n))
 }
 
 #' @rdname ControlChartConstants
 A2 <- function(n)
 {
+  checkmate::assertNumeric(n)
   3 / (d2(n) * sqrt(n))
 }
 
 #' @rdname ControlChartConstants
 A3 <- function(n)
 {
+  checkmate::assertNumeric(n)
   3 / (c4(n) * sqrt(n))
 }
 
 #' @rdname ControlChartConstants
 A4 <- function(n)
 {
+  checkmate::assertNumeric(n)
   3 / (d4(n) * sqrt(n))
 }
 
 #' @rdname ControlChartConstants
 A6 <- function(n)
 {
+  checkmate::assertNumeric(n)
   A <- data.frame(n = c(3, 5, 7, 9, 11),
                   A6 = c(1.187, 0.691, 0.509, 0.412, 0.350))
   A$A6[vapply(
@@ -76,6 +81,7 @@ A6 <- function(n)
 #' @rdname ControlChartConstants
 A9 <- function(n)
 {
+  checkmate::assertNumeric(n)
   A <- data.frame(n = c(3, 5, 7, 9),
                   A9 = c(1.265, 0.712, 0.520, 0.419))
   A$A9[vapply(
@@ -88,6 +94,21 @@ A9 <- function(n)
 #' @rdname ControlChartConstants
 B3 <- function(n, rms=TRUE)
 {
+  coll <- checkmate::makeAssertCollection()
+  
+  checkmate::assertNumeric(
+    x = n, 
+    add = coll
+  )
+  
+  checkmate::assertLogical(
+    x = rms, 
+    len = 1, 
+    add = coll
+  )
+  
+  checkmate::reportAssertions(coll)
+  
   cn <- 
     if (rms) 
     {
@@ -104,6 +125,22 @@ B3 <- function(n, rms=TRUE)
 #' @rdname ControlChartConstants
 B4 <- function(n, rms=TRUE)
 {
+  coll <- checkmate::makeAssertCollection()
+  
+  checkmate::assertNumeric(
+    x = n, 
+    len = 1, 
+    add = coll
+  )
+  
+  checkmate::assertLogical(
+    x = rms, 
+    len = 1, 
+    add = coll
+  )
+  
+  checkmate::reportAssertions(coll)
+  
   cn <- 
     if (rms) 
     {
@@ -120,18 +157,21 @@ B4 <- function(n, rms=TRUE)
 #' @rdname ControlChartConstants
 c2 <- function(n)
 {
+  checkmate::assertNumeric(n)
   sqrt(2/n) * (gamma(n/2) / gamma((n-1)/2))
 }
 
 #' @rdname ControlChartConstants
 c4 <- function(n)
 {
+  checkmate::assertNumeric(n)
   c2(n) * sqrt(n/(n-1))
 }
 
 #' @rdname ControlChartConstants
 d2 <- function (n) 
 {
+  checkmate::assertNumeric(n)
   n[n == 1] <- 2 
   
   fn <- quote(function(w){ptukey(w, n, Inf, lower.tail=FALSE)})
@@ -139,14 +179,15 @@ d2 <- function (n)
   vapply(n, 
          function(n)
          {
-           integrate(eval(fn), 0, Inf)[[1]]
+           stats::integrate(eval(fn), 0, Inf)[[1]]
          },
          numeric(1))
 }
 
 #' @rdname ControlChartConstants
-d3 <- function (n) 
+d3 <- function(n) 
 {
+  checkmate::assertNumeric(n)
   n[n == 1] <- 2
   
   d2 <- d2(n)
@@ -154,7 +195,7 @@ d3 <- function (n)
   fn <- quote(function(w){ w * (1 - ptukey(w, n, Inf))})
   
   d <- vapply(n,
-              function(n) integrate(eval(fn), 0, Inf)[[1]],
+              function(n) stats::integrate(eval(fn), 0, Inf)[[1]],
               numeric(1))
   
   sqrt(2 * d - d2^2)
@@ -163,6 +204,7 @@ d3 <- function (n)
 #' @rdname ControlChartConstants
 d4 <- function(n)
 {
+  checkmate::assertNumeric(n)
   D <- data.frame(n = c(2:25, seq(30, 50, by=5), seq(60, 100, by=10)),
                   d4 = c(.954, 1.588, 1.978, 2.257, 
                          2.472, 2.645, 2.791, 2.915, 3.024,
@@ -179,6 +221,7 @@ d4 <- function(n)
 #' @rdname ControlChartConstants
 D3 <- function(n)
 {
+  checkmate::assertNumeric(n)
   D <- 1 - (3 * d3(n) / d2(n))
   D <- ifelse(D < 0, NA, D)
   D
@@ -187,6 +230,7 @@ D3 <- function(n)
 #' @rdname ControlChartConstants
 D4 <- function(n)
 {
+  checkmate::assertNumeric(n)
   n[n == 1] <- 2
   1 + (3 * d3(n) / d2(n))
 }
@@ -194,12 +238,14 @@ D4 <- function(n)
 #' @rdname ControlChartConstants
 D5 <- function(n)
 {
+  checkmate::assertNumeric(n)
   (d2(n) - 3 * d3(n)) / d4(n)
 }
 
 #' @rdname ControlChartConstants
 D6 <- function(n)
 {
+  checkmate::assertNumeric(n)
   (d2(n) + 3 * d3(n)) / d4(n)
 }
   

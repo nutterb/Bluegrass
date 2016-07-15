@@ -1,25 +1,24 @@
 Package: Bluegrass
 Title: Assorted Tools and Gimmicks for My Own Personal Use
-Version: 0.1.1-1
+Version: 0.1.1-2
 Author: Benjamin Nutter
 Maintainer: Benjamin Nutter <benjamin.nutter@gmail.com>
-Description: There is no unifying vision for Bluegrass.  
-  It exists for the convenience of myself and those I work with.
+Description: There is no unifying vision for Bluegrass.
+    It exists for the convenience of myself and those I work with.
 Depends:
     R (>= 3.0.0)
 Imports:
+    checkmate,
+    data.table,
     dplyr,
-    ggplot2,
-    grid,
-    gridExtra,
     Hmisc,
-    lazyWeave,
     magrittr,
-    reshape2,
+    stats,
     stringr,
+    tibble,
     tidyr,
-    zoo,
 Suggests:
     survival
 License: GPL-3
 LazyData: true
+RoxygenNote: 5.0.1
