@@ -43,3 +43,17 @@ NULL
 #'
 
 NULL
+
+#' @name tidy
+#' @importFrom broom tidy
+#' @export tidy
+#' @usage tidy(x, ...)
+#' 
+#' @title Tidy the result of a test into a summary data.frame
+#' @description The output of tidy is always a tidy data.frame.  
+#'   See \link[broom]{tidy} for details.
+#'   
+#' @param x An object ot be converted into a tidy data.frame.
+#' @param ... extra arguments
+
+NULL
