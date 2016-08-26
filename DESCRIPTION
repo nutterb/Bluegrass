@@ -20,7 +20,8 @@ Imports:
     tibble,
     tidyr,
 Suggests:
-    survival
+    survival,
+    testthat
 License: GPL-3
 LazyData: true
 RoxygenNote: 5.0.1
