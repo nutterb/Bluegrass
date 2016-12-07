@@ -19,6 +19,20 @@
 #'   character in the password to be a digit?
 #' @param one_from_each \code{logical(1)}, is it mandatory that at least one 
 #'   from each character set be selected?
+#'
+#' @section Functional Requirements:
+#' \enumerate{
+#'   \item User may designate the length of the password.
+#'   \item User may include or exclude digits from the character pool.
+#'   \item User may include or exclude lower case letters from the character pool.
+#'   \item User may include or exclude upper case letters from the character pool.
+#'   \item User may designate which, if any, special character to include in the character pool.
+#'   \item Sampling may be done with or without replacement.
+#'   \item User may disallow the first character from being a digit
+#'   \item The user may require that at least one character from each character set is included.
+#'   \item The output has exactly as many character as \code{n}
+#'   \item The output is a \code{character(1)}
+#' }
 #'   
 #' @export
 
