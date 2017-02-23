@@ -20,6 +20,15 @@
 #'
 #' @seealso \code{\link{toggle_text}}, \code{\link{format}}, \code{\link{all.equal}}, 
 #'   \code{\link{isTRUE}}
+#'   
+#' @section Functional Requirements:
+#' \enumerate{
+#'   \item Return an error if \code{x} is not numeric.
+#'   \item Return an error if either \code{singular} or plural is not
+#'     a character string.
+#'   \item Return \code{singular} if \code{x} is equal to 1, else 
+#'     return \code{plural}.
+#' }
 #' 
 #' @examples
 #' toggle_plural(1, "was", "were")

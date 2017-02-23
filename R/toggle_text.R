@@ -18,6 +18,15 @@
 #' 
 #' @return \code{character(1)} object.
 #' 
+#' @section Functional Requirements:
+#' \enumerate{
+#'   \item Return an error if \code{condition} does not resolve to a logical.
+#'   \item Return an error if either \code{true} or \code{false} are not 
+#'     character strings.
+#'   \item Return \code{true} when condition resolves to \code{TRUE}, else
+#'     return \code{false}
+#' }
+#' 
 #' @examples
 #' p_value <- 0.01
 #' toggle_text(p_value <= 0.05, 

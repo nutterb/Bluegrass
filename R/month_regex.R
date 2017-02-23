@@ -21,12 +21,12 @@ month_regex <- function(abbreviated = FALSE)
 {
   checkmate::assert_logical(x = abbreviated,
                             len = 1)
-  (
+  m <-
     if (abbreviated) 
       month.abb
     else
       month.name
-  ) %>%
-    paste0(collapse = "|") %>%
-    paste0("(", ., ")")
+  m <- paste0(m, 
+              collapse = "|") 
+  paste0("(", m, ")")
 }

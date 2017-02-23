@@ -30,7 +30,6 @@
 #'   \item Sampling may be done with or without replacement.
 #'   \item User may disallow the first character from being a digit
 #'   \item The user may require that at least one character from each character set is included.
-#'   \item The output has exactly as many character as \code{n}
 #'   \item The output is a \code{character(1)}
 #' }
 #'   

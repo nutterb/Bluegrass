@@ -30,10 +30,8 @@ Bootstrapping data frames is a critical part of developing
 
 \enumerate{
   \item Accepts objects that inherits the \code{data.frame} class.
-  \item Objects returned have the same class as what was input.
+  \item Objects returned in the list have the same class as what was input.
   \item Returns a list of length \code{B}
-  \item When \code{groups} has length, each data set returned has the same
-    number of groups as was in the original data.
   \item cl An object that inherits the \code{cluster} class. Used for
     parallel computation. 
 }
