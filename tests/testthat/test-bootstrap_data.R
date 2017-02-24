@@ -114,14 +114,14 @@ test_that(
   }
 )
 
-test_that(
-  "FR4: accept `cl` when it inherits `cluster`",
-  {
-    expect_silent({
-      cl <- parallel::makeCluster(1)
-      parallel::clusterEvalQ(cl, library(Bluegrass))
-      bootstrap_data(mtcars, B = 10, cl = cl)
-      parallel::stopCluster(cl)
-    })
-  }
-)
+# test_that(
+#   "FR4: accept `cl` when it inherits `cluster`",
+#   {
+#     expect_silent({
+#       cl <- parallel::makeCluster(1)
+#       parallel::clusterEvalQ(cl, library(Bluegrass))
+#       bootstrap_data(mtcars, B = 10, cl = cl)
+#       parallel::stopCluster(cl)
+#     })
+#   }
+# )

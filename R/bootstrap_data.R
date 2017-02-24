@@ -139,3 +139,5 @@ single_cluster_bootstrap <- function(data, groups)
     dplyr::bind_rows() %>%
     dplyr::select(-..bootstrap_cluster_id..)
 }
+
+utils::globalVariables("..bootstrap_cluster_id..")

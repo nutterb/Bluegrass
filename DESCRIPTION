@@ -15,6 +15,7 @@ Imports:
     ggplot2,
     Hmisc,
     magrittr,
+    plyr,
     reshape2,
     stats,
     stringr,
