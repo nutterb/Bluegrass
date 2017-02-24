@@ -41,6 +41,25 @@
 
 show_duplicated <- function(data, key)
 {
+  
+# Argument Validations ----------------------------------------------
+  coll <- checkmate::makeAssertCollection()
+  
+  checkmate::assert_class(x = data, 
+                          classes = c("data.frame"),
+                          add = coll)
+  
+  checkmate::assert_character(x = key,
+                              add = coll)
+  
+  checkmate::assert_subset(x = key,
+                           choices = names(data),
+                           add = coll)
+  
+  checkmate::reportAssertions(coll)
+  
+# Functional Code  --------------------------------------------------
+  
   orig_class <- class(data)
   
   #* arrange the data frame

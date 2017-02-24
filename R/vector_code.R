@@ -15,6 +15,9 @@
 #'   been sacrificed.  It is assumed that this will not be used on 
 #'   large vectors.
 #'   
+#' \code{vector_code} does not always recreate the exact data structure.
+#' If the exact data structure is needed, consider using \code{\link{dput}}.
+#'   
 #' @section Functional Requirements:
 #' \enumerate{
 #'   \item Accept a vector of any type.
@@ -31,6 +34,17 @@
 #' @export
 
 vector_code <- function(x, width=getOption("width")){
+  
+  coll <- checkmate::makeAssertCollection()
+  
+  checkmate::assert_atomic_vector(x = x,
+                                  add = coll)
+  
+  checkmate::assert_integerish(x = width,
+                               len = 1,
+                               add = coll)
+  
+  checkmate::reportAssertions(coll)
  
  if (inherits(x, "Date")) x <- format(x,
                                       format = "%Y-%m-%d")

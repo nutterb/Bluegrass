@@ -23,6 +23,9 @@ This is intended as a code-writing utility.  As a convenience,
   right side of the screen).  To maintain the width, efficiency has 
   been sacrificed.  It is assumed that this will not be used on 
   large vectors.
+  
+\code{vector_code} does not always recreate the exact data structure.
+If the exact data structure is needed, consider using \code{\link{dput}}.
 }
 \section{Functional Requirements}{
 

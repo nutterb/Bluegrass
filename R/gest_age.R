@@ -61,6 +61,8 @@ gest_age <- function(edc, adc,
                                "week", "day", 
                                "week_decimal", "day_decimal"))
 {
+# Argument Validation -----------------------------------------------
+  
   coll <- checkmate::makeAssertCollection()
   
   result <- 
@@ -85,12 +87,15 @@ gest_age <- function(edc, adc,
   
   checkmate::reportAssertions(coll)
 
+# Functional Code ---------------------------------------------------
+  
   #* both week and day are based on the days difference between
   #* edc and adc.  Calculate it here once.
-  base <- 
-    difftime(edc, adc, units = "days") %>%
-    as.numeric() %>%
-    `-`(280, .)
+  base <- difftime(time1 = edc, 
+                   time2 = adc, 
+                   units = "days")
+  base <- as.numeric(base)
+  base <- 280 - base
   
   week <- floor(base / 7)
 
@@ -99,17 +104,13 @@ gest_age <- function(edc, adc,
   switch(
     result,
     "both_string" = sprintf("%s/%s",
-                            stringr::str_pad(string = week, 
-                                             width = 2, 
-                                             pad="0"), 
+                            sprintf("%02d", week),
                             day),
     "both_df" = data.frame(week = week, 
                            day = day),
-    "week" = return(week),
-    "day" = return(day),
+    "week" = week,
+    "day" = day,
     "week_decimal" = week + (day / 7),
     "day_decimal" = week * 7 + day
   )
 }
-
-utils::globalVariables(c("."))

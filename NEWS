@@ -1,25 +1,8 @@
 # `Bluegrass` Change History
 
-## Version 0.1.1-2 (15 July 2016)
-* Modernizing code.  Edits to `data_contents`, `labels_template`.
-* Updating documentation with functional requirements.
+## Version 0.3.0
 
-## Version 0.1.1-1 (30 April 2015)
-* Fixed a sorting bug in numberToWord that was creating weird results.
-
-## Version 0.1.1-0 (30 April 2015)
-* Added numberToWord for converting numerics into text strings.
-
-## Verison 0.1.0-0 (27 April 2015)
-* Added core functionality for control charts
-* Included dependency on dplyr and magrittr
-* Removed dependencies on plyr
-
-## Version 0.0.1-1
-* Upgrades to `ggSurvGraph`
-  * Adds the argument `conf.band`, which plots confidence bands to the KM curve
-  * Adds the argument `censor.mark`, which plots censoring marks on the KM curve
-  * Adds the argument `give_me`, which controls the output returned to the user.  
-    The user may request any combination of the plot, the raw survival data, and the 
-    reduced survival data for the confidence bars.
-  * Includes minor improvements to how the 0 time is added to the results
+* Significant changes to the API
+* Removed several functions
+* Began use of Functional Requirements Section
+* Extensive testing

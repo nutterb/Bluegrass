@@ -1,6 +1,6 @@
 Package: Bluegrass
 Title: Assorted Tools and Gimmicks for My Own Personal Use
-Version: 0.2.1
+Version: 0.3.0
 Author: Benjamin Nutter
 Maintainer: Benjamin Nutter <benjamin.nutter@gmail.com>
 Description: There is no unifying vision for Bluegrass.
@@ -9,12 +9,13 @@ Depends:
     R (>= 3.0.0)
 Imports:
     broom,
-    checkmate,
+    checkmate (>= 1.7.4),
     data.table,
     dplyr,
     ggplot2,
     Hmisc,
     magrittr,
+    reshape2,
     stats,
     stringr,
     tibble,

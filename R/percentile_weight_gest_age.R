@@ -19,12 +19,13 @@
 #'   data set.
 #'   
 #' @section Functional Requirements:
+#' Use World Health Organization reports for the basis of evaluation.
+#' 
 #' \enumerate{
 #'   \item Accepts the number of weeks gestational age and the fetal weight
 #'         in grams as numeric values.
 #'   \item Provides options to return output as a numeric value or a 
 #'         character value.
-#'   \item Use World Health Organization reports for the basis of evaluation.
 #' }
 #'   
 #' @author Benjamin Nutter

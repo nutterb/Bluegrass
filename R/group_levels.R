@@ -51,12 +51,19 @@
 group_levels <- function(x, ...)
 {
   # Argument Validation ---------------------------------------------
+  
+  lev <- list(...)
+  
   coll <- checkmate::makeAssertCollection()
+  
+  if (length(lev) == 0)
+  {
+    coll$push("There must be at least one vector in `...`")
+    checkmate::reportAssertions(coll)
+  }
   
   checkmate::assertAtomic(x = x,
                           add = coll)
-  
-  lev <- list(...)
 
   null_lev <- vapply(X = lev,
                      FUN = is.null,
@@ -72,6 +79,11 @@ group_levels <- function(x, ...)
   if (sum(null_lev) > 1)
   {
     coll$push("No more than one element to `...` may be `NULL`")
+  }
+  
+  if (!checkmate::test_named(lev))
+  {
+    coll$push("All elements to `...` must be named")
   }
   
   checkmate::reportAssertions(coll)
