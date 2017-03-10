@@ -99,11 +99,12 @@ password <- function(n = 10, digits = TRUE, upperalpha = TRUE,
   req <- 
     if (one_from_each)
     {
-      mapply(FUN = function(l, x) if (l) sample(x, size = 1) else character(0),
-             l = list(upperalpha, loweralpha, digits, length(special)),
-             x = list(LETTERS,    letters,    0:9,    special),
-             SIMPLIFY = FALSE) %>%
-        unlist()
+      tmp <- 
+        mapply(FUN = function(l, x) if (l) sample(x, size = 1) else character(0),
+               l = list(upperalpha, loweralpha, digits, length(special)),
+               x = list(LETTERS,    letters,    0:9,    special),
+               SIMPLIFY = FALSE) 
+      unlist(tmp)
     }
     else
     {
@@ -115,8 +116,8 @@ password <- function(n = 10, digits = TRUE, upperalpha = TRUE,
     c(if (upperalpha) LETTERS else character(0),
       if (loweralpha) letters else character(0),
       if (digits) 0:9 else character(0),
-      special) %>% 
-    unique
+      special) 
+  char_pool <- unique(char_pool)
   
   #* 3. If sampling is to be done without replacement, drop the 
   #*    characters selected in 1. from the pool
@@ -126,11 +127,10 @@ password <- function(n = 10, digits = TRUE, upperalpha = TRUE,
   }
   
   #* 4. Sample the pool for any remaining characters needed
-  selected_char <- 
-    sample(char_pool, 
-           size = n - length(req),
-           replace = replace) %>%
-    c(., req)
+  selected_char <- sample(char_pool, 
+                          size = n - length(req),
+                          replace = replace) 
+  selected_char <- c(selected_char, req)
   
   #* 5. Select a character from those selected to be the first character
   #*    The first is pulled separately to permit the user to decide
@@ -153,6 +153,6 @@ password <- function(n = 10, digits = TRUE, upperalpha = TRUE,
            size = n - 1)
   
   #* 7. Combine the characters in order and paste into a single string
-  c(first_char, remainder_char) %>%
-    paste(collapse = "")
+  pword <- c(first_char, remainder_char)
+  paste(pword, collapse = "")
 }
