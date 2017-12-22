@@ -42,6 +42,7 @@ In the requirements, \code{x} is used as shorthand for \code{data[["x"]]}
   \item Provide an option to return dummy values as logical values.
 }
 }
+
 \examples{
 # Dummy Variables as 0/1
 dummy_variable(iris, "Species")
@@ -59,4 +60,3 @@ dummy_variable(iris, "Species", var_name = TRUE, as_logical = TRUE)
 dummy_variable(iris, "Species", lev = "virginica")
 
 }
-

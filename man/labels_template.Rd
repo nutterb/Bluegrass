@@ -42,6 +42,7 @@ Using labels from the \code{\link[Hmisc]{label}} functions in
         use without loading the \code{Hmisc} package.
 }
 }
+
 \examples{
 library(Hmisc)
 
@@ -58,4 +59,3 @@ labels_template(mtcars2, retain_current = FALSE)
 \author{
 Benjamin Nutter
 }
-

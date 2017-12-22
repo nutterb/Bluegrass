@@ -15,4 +15,3 @@ tidy(x, ...)
 The output of tidy is always a tidy data.frame.  
   See \link[broom]{tidy} for details.
 }
-

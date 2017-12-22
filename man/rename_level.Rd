@@ -43,6 +43,7 @@ This is a wrapper for \code{\link[plyr]{revalue}}. It performs
   \item Permit missing values to be assigned a character level label.
 }
 }
+
 \examples{
 val <- factor(LETTERS[1:5])
 rename_level(val, "F" = "f")
@@ -58,4 +59,3 @@ rename_level(val_with_na, A = "hello", na_val = "sweet", D = NA)
 \seealso{
 \code{\link[plyr]{revalue}}
 }
-

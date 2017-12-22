@@ -32,6 +32,7 @@ Using the \code{duplicated} function returns a logical vector
         have at least one duplication on \code{key} columns.
 }
 }
+
 \examples{
 DF <- data.frame(
   id = c(1, 1, 1, 2, 2, 2, 3, 3, 3),
@@ -49,4 +50,3 @@ show_duplicated(DF, c("id", "week", "obs"))
 \author{
 Benjamin Nutter
 }
-

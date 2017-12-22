@@ -75,6 +75,7 @@ If \code{data} is either a \code{data.frame} or \code{data.table},
         they are given in the data.
 }
 }
+
 \examples{
 library(dplyr)
 
@@ -91,4 +92,3 @@ mtcars \%>\%
 \author{
 Benjamin Nutter
 }
-

@@ -33,6 +33,7 @@ Simplifies the consolidation of multiple factor levels into
   \item No more than one argument passed to \code{...} may be \code{NULL}.
 }
 }
+
 \examples{
 # From the Stack Overflow Question that inspired this function:
 DF <- data.frame(Members = c("Eva",  "Charlie1", "Fred",     "Charlie2", 
@@ -54,10 +55,9 @@ group_levels(DF$Members,
              Group1 = c("Eva", "Adam"), 
              Group2 = c("Charlie1", "Charlie2"))
 }
-\author{
-Benjamin Nutter
-}
 \seealso{
 \code{\link{levels}}
 }
-
+\author{
+Benjamin Nutter
+}

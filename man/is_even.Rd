@@ -34,6 +34,7 @@ A number \code{x} is even if there exists some integer
         are not integer-like values.
 }
 }
+
 \examples{
 is_even(1:10)
 
@@ -53,4 +54,3 @@ is_odd(1:10)
 \seealso{
 \code{\link{Arithmetic}}
 }
-

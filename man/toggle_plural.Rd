@@ -37,17 +37,17 @@ When writing dynamic documents, it is not always known if a
     return \code{plural}.
 }
 }
+
 \examples{
 toggle_plural(1, "was", "were")
 
 toggle_plural(1, "is", "are")
 
 }
-\author{
-Benjamin Nutter
-}
 \seealso{
 \code{\link{toggle_text}}, \code{\link{format}}, \code{\link{all.equal}}, 
   \code{\link{isTRUE}}
 }
-
+\author{
+Benjamin Nutter
+}

@@ -36,6 +36,7 @@ If the exact data structure is needed, consider using \code{\link{dput}}.
         original vector (within limits: dates will be strings)
 }
 }
+
 \examples{
 vector_code(1:3)
 
@@ -43,4 +44,3 @@ vector_code(1:3)
 \author{
 Benjamin Nutter
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/gg_km_data.R
 \name{gg_km_data}
 \alias{gg_km_data}
-\alias{gg_km_data.summary.survfit}
 \alias{gg_km_data.survfit}
+\alias{gg_km_data.summary.survfit}
 \title{Construct Data for Use in Kaplan-Meier Plots}
 \usage{
 gg_km_data(object, ...)
@@ -43,7 +43,7 @@ The \code{summary.survfit} method only returns times requested by the user (or t
   \item Remove the \code{"x="} prefix from the \code{strata} column.
 }
 }
+
 \author{
 Benjamin Nutter
 }
-

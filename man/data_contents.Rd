@@ -77,4 +77,3 @@ The numeric summary is generated using the \code{univ} function from the
 \author{
 Benjamin Nutter
 }
-

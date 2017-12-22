@@ -38,6 +38,7 @@ A vectorized wrapper for \code{isTRUE(all.equal(x, y))} for
   \item Cast a warning if \code{x} and \code{y} do not share a class
 }
 }
+
 \examples{
 is_equal(1:3, 1:3)
 
@@ -62,4 +63,3 @@ is_equal(c(1, NA, 2),
 \seealso{
 \code{\link{all.equal}}, \code{\link{isTRUE}}, \code{\link{mapply}}
 }
-

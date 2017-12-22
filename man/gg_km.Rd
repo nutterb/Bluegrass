@@ -86,7 +86,7 @@ a list to \code{gg_expr}.
         when a simple \code{ggplot} object cannot be returned.
 }
 }
+
 \author{
 Benjamin Nutter
 }
-

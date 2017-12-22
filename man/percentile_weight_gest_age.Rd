@@ -48,6 +48,7 @@ Use World Health Organization reports for the basis of evaluation.
         character value.
 }
 }
+
 \examples{
 #* Results can be read as "less than 75th percentile" (for example) 
 percentile_weight_gest_age(weeks = c(30, 34, 36),
@@ -69,4 +70,3 @@ percentile_weight_gest_age(weeks = c(30, 34, 36),
 \author{
 Benjamin Nutter
 }
-

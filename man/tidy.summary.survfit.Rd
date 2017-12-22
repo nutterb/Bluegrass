@@ -26,7 +26,7 @@ Tidier for \code{summary.survfit} objects.  This isn't greatly different
   \item return a tidy \code{data.frame}
 }
 }
+
 \author{
 Benjamin Nutter
 }
-

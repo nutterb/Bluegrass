@@ -34,6 +34,7 @@ Toggle between two text strings based on the evaluation
     return \code{false}
 }
 }
+
 \examples{
 p_value <- 0.01
 toggle_text(p_value <= 0.05, 
@@ -41,10 +42,9 @@ toggle_text(p_value <= 0.05,
             false = "is not statistically significant")
 
 }
-\author{
-Benjamin Nutter
-}
 \seealso{
 \code{toggle_plural}
 }
-
+\author{
+Benjamin Nutter
+}

@@ -58,6 +58,7 @@ Gestational age is commonly reported as [weeks]/[days] where
         both, the number of decimal weeks, or the number of decimal days.
 }
 }
+
 \examples{
 edc <- as.Date(c("6/18/2010", "10/22/2010"), format="\%m/\%d/\%Y")
 adc <- as.Date(c("5/22/2010", "10/18/2010"), format="\%m/\%d/\%Y")
@@ -69,4 +70,3 @@ gest_age(edc, adc, "day")
 \author{
 Benjamin Nutter
 }
-

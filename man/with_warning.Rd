@@ -16,4 +16,3 @@ Running a function like \code{univariable_table} has the
   warning.  This captures the warning without casting it so the warnings 
   can all be gathered and printed at the same time.
 }
-

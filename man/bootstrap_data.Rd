@@ -36,7 +36,7 @@ Bootstrapping data frames is a critical part of developing
     parallel computation. 
 }
 }
+
 \author{
 Benjamin Nutter
 }
-

@@ -60,6 +60,7 @@ will look like:
   \item Return NULL when an error occurs during a test
 }
 }
+
 \examples{
 univariable_table(data = mtcars,
                   vars = c("mpg", "vs", "qsec", "gear"),
@@ -68,4 +69,3 @@ univariable_table(data = mtcars,
                   mpg = list(test = t.test, alternative = "greater"))
 
 }
-
