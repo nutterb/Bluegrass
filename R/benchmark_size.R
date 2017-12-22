@@ -13,7 +13,6 @@
 #'   \code{microbenchmark}
 #' @param unit \code{character}, specifies the unit of time to measure.
 #' @param ... expressions to benchmark
-#'   Use \code{ncore = 1} to run serially.
 #'
 #' @export
 
@@ -22,7 +21,7 @@ benchmark_size <- function(object, ..., size = c(10, 100, 1000),
   UseMethod("benchmark_size")
 }
 
-#' @rdname benchmark_on_data
+#' @rdname benchmark_size
 #' @export
 
 benchmark_size.default <- function(object, ..., size = c(10, 100, 1000),
@@ -43,11 +42,6 @@ benchmark_size.default <- function(object, ..., size = c(10, 100, 1000),
   unit <- checkmate::matchArg(x = unit,
                               choices = c("ns", "us", "ms", "s", "eps", "relative"),
                               add = coll)
-
-  checkmate::assert_class(x = cl,
-                          classes = "cluster",
-                          null.ok = TRUE,
-                          add = coll)
 
   m <- lapply(size,
               function(s, object, times, ...){
@@ -94,12 +88,7 @@ benchmark_size.data.frame <- function(object, ..., size = c(10, 100, 1000),
   unit <- checkmate::matchArg(x = unit,
                               choices = c("ns", "us", "ms", "s", "eps", "relative"),
                               add = coll)
-
-  checkmate::assert_class(x = cl,
-                          classes = "cluster",
-                          null.ok = TRUE,
-                          add = coll)
-
+  
   checkmate::reportAssertions(coll)
 
   m <- lapply(size,

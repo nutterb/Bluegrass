@@ -2,18 +2,21 @@
 % Please edit documentation in R/benchmark_size.R
 \name{benchmark_size}
 \alias{benchmark_size}
+\alias{benchmark_size.default}
 \alias{benchmark_size.data.frame}
 \title{Benchmark Expressions Against Variably Sized Data}
 \usage{
 benchmark_size(object, ..., size = c(10, 100, 1000), times = 100,
   unit = "ms")
 
+\method{benchmark_size}{default}(object, ..., size = c(10, 100, 1000),
+  times = 100, unit = "ms")
+
 \method{benchmark_size}{data.frame}(object, ..., size = c(10, 100, 1000),
   times = 100, unit = "ms")
 }
 \arguments{
-\item{...}{expressions to benchmark
-Use \code{ncore = 1} to run serially.}
+\item{...}{expressions to benchmark}
 
 \item{size}{\code{numeric}, sample sizes to iterate over.}
 
