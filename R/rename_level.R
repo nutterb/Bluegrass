@@ -2,7 +2,7 @@
 #' @title Rename Factor Levels
 #' 
 #' @description Tool for renaming an arbitrary number of levels in a factor
-#'   variable.
+#'   variable. NOTE: This may be done using the \code{forcats} package.
 #'   
 #' @param x a vector of class \code{factor}
 #' @param ... Additional, named arguments where the name is an existing

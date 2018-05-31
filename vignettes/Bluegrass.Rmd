@@ -1,0 +1,54 @@
+---
+title: "Bluegrass: Utilities to Make My Life Easier"
+author: "Benjamin Nutter"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: no
+    number_section: yes
+    toc: yes
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Bluegrass}
+  \usepackage[utf8]{inputenc}
+---
+
+# Introduction
+
+The `Bluegrass` package is a collection of utilities I maintain solely for my own convenience.  Most of these are general purpose functions that simplify common tasks. Use of this package comes with no promise of backward compatibility, though I tend to maintain that as much as possible for my own convenience.
+
+Some of the functions contained in `Bluegrass` have a specific purpose. I will try to categorize the contents with a brief description below.
+
+# General Utilities
+
+* `dummy_variable`: Return a data frame of dummy variables constructed from a factor variable.
+* `is_equal`: a vectorized version of the `isTRUE(all.equal(...))` construct. Compares the contents of two vectors for equality with the appropriate tolerance. This avoids returning `FALSE` for values that differ only in small floating point estimation differences.
+* `is_even`: Returns a vector of logicals indicating if a value is even.
+* `is_odd`: Returns a vectors of logicals indicating if a value is odd.
+* `show_duplicated`: Identifies duplicates in a data frame and returns not just the duplicates, but the row that is duplicated as well.
+* `month_regex`: Generate a Regular Expression for Extracting Month Names from a String
+
+# Managing Factors
+
+* `factor_reference`: Produce a list of data frames relating factor levels with their labels.
+* `group_levels`: Consolidate multiple factor levels into a smaller number of levels.  This may also be accomplished using functions in the `forcats` package.
+* `rename_level`: Rename a level in a factor. This may also be done using functions in the `forcats` package.
+
+# Templating Data 
+
+* `labels_template`: Produce a template for labelling vectors in a data frame using the `Hmisc` labels.  This is a bit defunct, and I recommend using the `labelVector` package instead. 
+* `vector_code`: Produce a string that may be copied and pasted to recreate a vector. Differs from `dput` in that it does not necessarily preserve classes or attributes.
+
+# Resampling
+
+* `bootstrap_data`: Make a bootstrap data set.
+
+# Gestational Age and Weight
+
+* `gest_age`: Calculate the gestational age of a child or fetus.
+* `percentile_weight_gest_age`: Percentile weight for gestational age.
+
+# Writing Documents
+
+* `toggle_plural`: Select text for plural vs. non-plural results.
+* `toggle_text`: Select text based on a condition.

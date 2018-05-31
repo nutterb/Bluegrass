@@ -23,7 +23,7 @@ at the end of the \code{levels} attribute.}
 }
 \description{
 Tool for renaming an arbitrary number of levels in a factor
-  variable.
+  variable. NOTE: This may be done using the \code{forcats} package.
 }
 \details{
 This is a wrapper for \code{\link[plyr]{revalue}}. It performs 
