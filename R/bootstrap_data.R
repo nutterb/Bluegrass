@@ -14,6 +14,8 @@
 #' @param seed A numeric value with which the random number generator may 
 #'   be seeded.  Using \code{character{0}} or \code{NULL} causes the 
 #'   function to behave off of whatever exists in the environment at present.
+#' @param cl An object that inherits the \code{cluster} class. Optional
+#'   argument to be used if parallel processing is desired.
 #'   
 #' @section Functional Requirements:
 #' \enumerate{

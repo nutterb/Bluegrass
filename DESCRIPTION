@@ -8,22 +8,25 @@ Description: There is no unifying vision for Bluegrass.
 Depends:
     R (>= 3.0.0)
 Imports:
-    broom,
-    checkmate (>= 1.7.4),
-    data.table,
-    dplyr,
-    ggplot2,
-    Hmisc,
-    magrittr,
-    plyr,
-    reshape2,
-    stats,
-    stringr,
-    tibble,
-    tidyr,
+  broom,
+  checkmate (>= 1.7.4),
+  data.table,
+  dplyr,
+  ggplot2,
+  Hmisc,
+  magrittr,
+  plyr,
+  reshape2,
+  stats,
+  stringr,
+  tibble,
+  tidyr,
 Suggests:
-    survival,
-    testthat
+  knitr,
+  survival,
+  testthat
+VignetteBuilder:
+  knitr
 License: GPL-3
 LazyData: true
 RoxygenNote: 6.0.1
